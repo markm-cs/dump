@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# API endpoint and credentials
+CLEARPASS_API="https://your-clearpass-instance/api/"
+CLEARPASS_USER="your-username"
+CLEARPASS_PASS="your-password"
+
+# Authentication token request
+TOKEN_RESPONSE=$(curl -s -k -X POST "${CLEARPASS_API}/oauth" \
+  -H "Content-Type: application/json" \
+  -d '{"grant_type":"password", "username":"'"${CLEARPASS_USER}"'", "password":"'"${CLEARPASS_PASS}"'"}')
+
+# Extract the access token from the response
+ACCESS_TOKEN=$(echo "${TOKEN_RESPONSE}" | jq -r '.access_token')
+
+# Make a request to the API using the access token
+API_RESPONSE=$(curl -s -k -X GET "${CLEARPASS_API}/endpoint" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer ${ACCESS_TOKEN}")
+
+# Display the API response
+echo "${API_RESPONSE}"
